@@ -7,10 +7,10 @@ use validator::Validate;
 
 use crate::{
     AppState,
-    domains::user_domain::{RegisterUser, Response},
-    errors::{ErrorMessage, HttpError},
+    errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_verification_email,
-    infra::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserExt,
+    models::user::{request::RegisterUser, response::Response},
     utils::password,
 };
 

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{Extension, Router, middleware};
 use tower_http::trace::TraceLayer;
 
-use crate::{AppState, infra::middleware::auth};
+use crate::{AppState, infrastructure::middleware::auth::auth};
 
 use super::{auth::auth_router::auth_handler, sesstion::users::users_handler};
 

@@ -10,9 +10,9 @@ use validator::Validate;
 
 use crate::{
     AppState,
-    domains::user_domain::{LoginUser, UserLoginResponse},
-    errors::{ErrorMessage, HttpError},
-    infra::user::trait_user::UserExt,
+    errors::{error_message::ErrorMessage, http_error::HttpError},
+    infrastructure::user::trait_user::UserExt,
+    models::user::{request::LoginUser, response::UserLoginResponse},
     utils::{password, token},
 };
 
@@ -37,7 +37,7 @@ pub async fn login(
         .map_err(|_| HttpError::bad_request(ErrorMessage::WrongCredentials.to_string()))?;
 
     if password_matched {
-        let token = token::create_token(
+        let token = token::generate_token(
             &user.id.to_string(),
             &app_state.env.jwt_secret.as_bytes(),
             app_state.env.jwt_maxage,

@@ -11,16 +11,17 @@ use validator::Validate;
 
 use crate::{
     AppState,
-    domains::user_domain::{
-        FilterUser, NameUpdate, RequestQuery, Response, RoleUpdate, UserData, UserListResponse,
-        UserPasswordUpdate, UserResponse,
-    },
-    errors::{ErrorMessage, HttpError},
-    infra::{
-        middleware::{JWTAuthMiddleware, role_check},
+    domains::user::UserRole,
+    errors::{error_message::ErrorMessage, http_error::HttpError},
+    infrastructure::{
+        middleware::auth::{JWTAuthMiddleware, role_check},
         user::trait_user::UserExt,
     },
-    models::user::UserRole,
+    models::user::{
+        request::RequestQuery,
+        response::{FilterUser, Response, UserData, UserListResponse, UserResponse},
+        update::{NameUpdate, RoleUpdate, UserPasswordUpdate},
+    },
     utils::password,
 };
 

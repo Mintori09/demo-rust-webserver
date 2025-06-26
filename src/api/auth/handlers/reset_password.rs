@@ -7,9 +7,9 @@ use validator::Validate;
 
 use crate::{
     AppState,
-    domains::user_domain::{ResetPasswordRequest, Response},
-    errors::HttpError,
-    infra::user::trait_user::UserExt,
+    errors::http_error::HttpError,
+    infrastructure::user::trait_user::UserExt,
+    models::user::{request::ResetPasswordRequest, response::Response},
     utils::password,
 };
 

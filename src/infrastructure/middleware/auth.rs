@@ -13,12 +13,11 @@ use uuid::Uuid;
 
 use crate::{
     AppState,
-    errors::{ErrorMessage, HttpError},
-    models::user::{User, UserRole},
+    domains::user::{User, UserRole},
+    errors::{error_message::ErrorMessage, http_error::HttpError},
+    infrastructure::user::trait_user::UserExt,
     utils::token,
 };
-
-use super::user::trait_user::UserExt;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct JWTAuthMiddleware {

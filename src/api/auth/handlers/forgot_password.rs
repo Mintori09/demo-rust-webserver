@@ -7,10 +7,10 @@ use validator::Validate;
 
 use crate::{
     AppState,
-    domains::user_domain::{ForgotPasswordRequest, Response},
-    errors::HttpError,
+    errors::http_error::HttpError,
     helpers::mail::mails::send_forgot_password_email,
-    infra::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserExt,
+    models::user::{request::ForgotPasswordRequest, response::Response},
 };
 
 pub async fn forgot_password(

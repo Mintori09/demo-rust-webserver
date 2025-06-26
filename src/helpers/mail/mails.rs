@@ -5,7 +5,7 @@ type MailResult = Result<(), Box<dyn std::error::Error>>;
 pub async fn send_verification_email(to_email: &str, username: &str, token: &str) -> MailResult {
     let subject = "Email Verification";
     let template_path = "src/helpers/mail/templates/Verification-email.html";
-    let base_url = "http://localhost:8000/api/auth/verify";
+    let base_url = "http://localhost:8000/api/auth/verify-email";
     let verification_link = create_verification_link(base_url, token);
     let placeholders = vec![
         ("{{username}}".to_string(), username.to_string()),

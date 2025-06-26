@@ -1,13 +1,21 @@
+use api::router::create_router;
 use axum::{
     Extension, Router,
     http::{
         HeaderValue, Method,
         header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
     },
+    middleware,
 };
-use configs::config_db::Config;
+use config::database::Config;
 use dotenv::dotenv;
-use infra::database::db::DBClient;
+use infrastructure::{
+    database::database::DBClient,
+    middleware::{
+        debug_after::debug_after,
+        request::{self, debug_before},
+    },
+};
 use sqlx::postgres::PgPoolOptions;
 use std::sync::Arc;
 use tokio::net::TcpListener;
@@ -15,11 +23,12 @@ use tower_http::cors::CorsLayer;
 use tracing_subscriber::filter::LevelFilter;
 
 pub mod api;
-pub mod configs;
+pub mod config;
+pub mod core;
 pub mod domains;
 pub mod errors;
 pub mod helpers;
-pub mod infra;
+pub mod infrastructure;
 pub mod models;
 pub mod utils;
 
@@ -66,6 +75,9 @@ pub async fn run() {
     });
 
     let app = Router::new()
+        .merge(create_router(app_state.clone()))
+        .layer(middleware::from_fn(debug_after))
+        .layer(middleware::from_fn(debug_before))
         .layer(Extension(app_state))
         .layer(cors.clone());
 

@@ -11,10 +11,10 @@ use validator::Validate;
 
 use crate::{
     AppState,
-    domains::user_domain::VerifyEmailQuery,
-    errors::{ErrorMessage, HttpError},
+    errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_welcome_email,
-    infra::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserExt,
+    models::user::request::VerifyEmailQuery,
     utils::token,
 };
 
@@ -41,7 +41,7 @@ pub async fn verify_email(
         eprintln!("Failed to send welcome email: {}", e);
     }
 
-    let token = token::create_token(
+    let token = token::generate_token(
         &user.id.to_string(),
         &app_state.env.jwt_secret.as_bytes(),
         app_state.env.jwt_maxage,
@@ -59,7 +59,7 @@ pub async fn verify_email(
 
     headers.append(header::SET_COOKIE, cookie.to_string().parse().unwrap());
 
-    let frontend_url = format!("http://local:5173/settings");
+    let frontend_url = format!("http://localhost:5173/settings");
 
     let redirect = Redirect::to(&frontend_url);
 

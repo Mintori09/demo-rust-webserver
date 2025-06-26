@@ -3,8 +3,8 @@ use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
 use crate::{
-    infra::database::db::DBClient,
-    models::user::{User, UserRole},
+    domains::user::{User, UserRole},
+    infrastructure::database::database::DBClient,
 };
 
 #[async_trait]

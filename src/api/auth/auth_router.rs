@@ -3,7 +3,7 @@ use axum::{
     routing::{get, post},
 };
 
-use super::{
+use super::handlers::{
     forgot_password::forgot_password, login::login, register::register,
     reset_password::reset_password, verify_email::verify_email,
 };

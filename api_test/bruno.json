@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Auth Rust",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

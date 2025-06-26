@@ -5,7 +5,7 @@ use lettre::{
 };
 use tokio::fs;
 
-use crate::configs::config_smtp::MySMTP;
+use crate::config::email::MySMTP;
 
 pub async fn send_email(
     to_email: &str,

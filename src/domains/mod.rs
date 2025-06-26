@@ -1,1 +1,1 @@
-pub mod user_domain;
+pub mod user;
