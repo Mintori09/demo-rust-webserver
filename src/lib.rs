@@ -11,10 +11,7 @@ use config::database::Config;
 use dotenv::dotenv;
 use infrastructure::{
     database::database::DBClient,
-    middleware::{
-        debug_after::debug_after,
-        request::{self, debug_before},
-    },
+    middleware::{debug_after::debug_after, request::debug_before},
 };
 use sqlx::postgres::PgPoolOptions;
 use std::sync::Arc;

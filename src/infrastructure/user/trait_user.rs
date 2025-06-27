@@ -28,7 +28,7 @@ pub trait UserExt {
     ) -> Result<User, sqlx::Error>;
 
     async fn get_user_count(&self) -> Result<i64, sqlx::Error>;
-    async fn update_user_name<T: Into<String> + Send>(
+    async fn update_username<T: Into<String> + Send>(
         &self,
         user_id: Uuid,
         name: T,
@@ -141,7 +141,7 @@ impl UserExt for DBClient {
         Ok(row.0)
     }
 
-    async fn update_user_name<T: Into<String> + Send>(
+    async fn update_username<T: Into<String> + Send>(
         &self,
         user_id: Uuid,
         name: T,

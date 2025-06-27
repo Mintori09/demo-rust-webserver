@@ -39,7 +39,7 @@ pub fn users_handler() -> Router {
                 role_check(state, req, next, vec![UserRole::Admin])
             })),
         )
-        .route("/name", put(update_user_name))
+        .route("/name", put(update_username))
         .route("/role", put(update_user_role))
         .route("/password", put(update_user_password))
 }
@@ -92,7 +92,7 @@ pub async fn get_users(
     Ok(Json(response))
 }
 
-pub async fn update_user_name(
+pub async fn update_username(
     Extension(app_state): Extension<Arc<AppState>>,
     Extension(user): Extension<JWTAuthMiddleware>,
     Json(body): Json<NameUpdate>,
@@ -106,7 +106,7 @@ pub async fn update_user_name(
 
     let result = app_state
         .db_client
-        .update_user_name(user_id.clone(), &body.name)
+        .update_username(user_id.clone(), &body.name)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
