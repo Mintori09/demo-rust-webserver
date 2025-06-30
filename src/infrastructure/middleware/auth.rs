@@ -1,5 +1,10 @@
-use std::sync::Arc;
-
+use crate::{
+    AppState,
+    domains::user::{User, UserRole},
+    errors::{error_message::ErrorMessage, http_error::HttpError},
+    infrastructure::user::trait_user::UserExt,
+    utils::token,
+};
 use axum::{
     Extension,
     extract::Request,
@@ -9,15 +14,8 @@ use axum::{
 };
 use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use uuid::Uuid;
-
-use crate::{
-    AppState,
-    domains::user::{User, UserRole},
-    errors::{error_message::ErrorMessage, http_error::HttpError},
-    infrastructure::user::trait_user::UserExt,
-    utils::token,
-};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct JWTAuthMiddleware {
@@ -47,6 +45,7 @@ pub async fn auth(
         });
     let token = cookies
         .ok_or_else(|| HttpError::unauthorized(ErrorMessage::TokenNotProvided.to_string()))?;
+
     let token_details = match token::decode_token(token, app_state.env.jwt_secret.as_bytes()) {
         Ok(token_details) => token_details,
         Err(_) => {
@@ -63,11 +62,12 @@ pub async fn auth(
         .db_client
         .get_user(Some(user_id), None, None, None)
         .await
-        .map_err(|_| HttpError::unauthorized(ErrorMessage::UserNoLongerExist.to_string()))?;
-    let user =
-        user.ok_or_else(|| HttpError::unauthorized(ErrorMessage::UserNoLongerExist.to_string()))?;
+        .map_err(|_| HttpError::unauthorized(ErrorMessage::UserNoLongerExist.to_string()))?
+        .ok_or_else(|| HttpError::unauthorized(ErrorMessage::UserNoLongerExist.to_string()))?;
+
     req.extensions_mut()
         .insert(JWTAuthMiddleware { user: user.clone() });
+
     Ok(next.run(req).await)
 }
 
@@ -81,11 +81,13 @@ pub async fn role_check(
         .extensions()
         .get::<JWTAuthMiddleware>()
         .ok_or_else(|| HttpError::unauthorized(ErrorMessage::UserNotAuthenticated.to_string()))?;
+
     if !require_roles.contains(&user.user.role) {
         return Err(HttpError::new(
             ErrorMessage::PermissionDenied.to_string(),
             StatusCode::FORBIDDEN,
         ));
     }
+
     Ok(next.run(req).await)
 }
