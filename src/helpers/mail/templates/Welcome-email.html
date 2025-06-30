@@ -5,34 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome Email</title>
   </head>
-  <body
-    style="
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      padding: 20px;
-    "
-  >
-    <div
-      style="
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-      "
+  <body style="margin: 0; padding: 0; background-color: #f2f2f2">
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="background-color: #f2f2f2; padding: 20px 0"
     >
-      <h2 style="color: #333333">Welcome to Our Application!</h2>
-      <p style="color: #555555">Hello, {{username}}!</p>
-      <p style="color: #555555">
-        Thank you for registering at our application. We’re excited to have you
-        on board.
-      </p>
-      <p style="color: #555555">
-        If you have any questions, feel free to reply to this email or visit our
-        support page.
-      </p>
-      <p style="color: #555555">Best regards,</p>
-      <p style="color: #555555">The Application Team</p>
-    </div>
+      <tr>
+        <td align="center">
+          <table
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              width: 100%;
+              max-width: 600px;
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+              font-family: Arial, sans-serif;
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                style="
+                  padding: 30px 20px;
+                  text-align: center;
+                  background-color: #4f46e5;
+                  color: #ffffff;
+                "
+              >
+                <h1 style="margin: 0; font-size: 24px">Welcome to Our App</h1>
+              </td>
+            </tr>
+            <!-- Body -->
+            <tr>
+              <td style="padding: 30px 20px">
+                <p style="margin: 0 0 15px; color: #333333; font-size: 16px">
+                  Hello <strong>{{username}}</strong>,
+                </p>
+                <p style="margin: 0 0 15px; color: #555555; font-size: 15px">
+                  Thank you for registering with us! We're thrilled to have you
+                  onboard.
+                </p>
+                <p style="margin: 0 0 15px; color: #555555; font-size: 15px">
+                  You can now log in and explore all the features we have to
+                  offer.
+                </p>
+                <p style="margin: 0 0 15px; color: #555555; font-size: 15px">
+                  If you have any questions, simply reply to this email or check
+                  out our
+                  <a
+                    href="https://yourapp.com/support"
+                    style="color: #4f46e5; text-decoration: none"
+                    >Support Center</a
+                  >.
+                </p>
+                <p style="margin: 0 0 10px; color: #333333; font-size: 15px">
+                  Best regards,
+                </p>
+                <p style="margin: 0; color: #333333; font-size: 15px">
+                  The Application Team
+                </p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  padding: 15px 20px;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #999999;
+                "
+              >
+                © {{year}} Your Application. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>

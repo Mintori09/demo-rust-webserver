@@ -5,46 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email Verification</title>
   </head>
-  <body
-    style="
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      padding: 20px;
-    "
-  >
-    <div
-      style="
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
-      "
+  <body style="margin: 0; padding: 0; background-color: #f4f4f4">
+    <table
+      width="100%"
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      style="padding: 20px 0; background-color: #f4f4f4"
     >
-      <h2 style="color: #333333">Email Verification</h2>
-      <p style="color: #555555">Hello, {{username}}!</p>
-      <p style="color: #555555">
-        Thank you for registering at our application. Please click the link
-        below to verify your email address:
-      </p>
-      <a
-        href="{{verification_link}}"
-        style="
-          display: inline-block;
-          padding: 10px 20px;
-          font-size: 16px;
-          color: #ffffff;
-          background-color: #007bff;
-          text-decoration: none;
-          border-radius: 5px;
-        "
-        >Verify Email</a
-      >
-      <p style="color: #555555">
-        If you did not register, please ignore this email.
-      </p>
-      <p style="color: #555555">Best regards,</p>
-      <p style="color: #555555">The Application Team</p>
-    </div>
+      <tr>
+        <td align="center">
+          <table
+            width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              max-width: 600px;
+              background-color: #ffffff;
+              border-radius: 8px;
+              overflow: hidden;
+              box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+              font-family: Arial, sans-serif;
+            "
+          >
+            <!-- Header -->
+            <tr>
+              <td
+                style="
+                  background-color: #4f46e5;
+                  padding: 30px 20px;
+                  text-align: center;
+                  color: #ffffff;
+                "
+              >
+                <h1 style="margin: 0; font-size: 24px">Verify Your Email</h1>
+              </td>
+            </tr>
+            <!-- Content -->
+            <tr>
+              <td style="padding: 30px 20px">
+                <p style="margin: 0 0 15px; font-size: 16px; color: #333333">
+                  Hello <strong>{{username}}</strong>,
+                </p>
+                <p style="margin: 0 0 15px; font-size: 15px; color: #555555">
+                  Thank you for registering with us! Please confirm your email
+                  address by clicking the button below:
+                </p>
+                <p style="margin: 25px 0; text-align: center">
+                  <a
+                    href="{{verification_link}}"
+                    style="
+                      background-color: #4f46e5;
+                      color: #ffffff;
+                      text-decoration: none;
+                      padding: 12px 24px;
+                      border-radius: 6px;
+                      font-size: 16px;
+                      display: inline-block;
+                    "
+                  >
+                    Verify Email
+                  </a>
+                </p>
+                <p style="margin: 0 0 15px; font-size: 14px; color: #888888">
+                  If you did not create an account, you can safely ignore this
+                  email.
+                </p>
+                <p style="margin: 0 0 10px; font-size: 15px; color: #333333">
+                  Best regards,
+                </p>
+                <p style="margin: 0; font-size: 15px; color: #333333">
+                  The Application Team
+                </p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td
+                style="
+                  padding: 15px 20px;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #999999;
+                "
+              >
+                © {{year}} Your Application. All rights reserved.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
