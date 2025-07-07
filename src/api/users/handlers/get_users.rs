@@ -6,7 +6,7 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserRepository,
     models::user::{
         request::RequestQuery,
         response::{FilterUser, UserListResponse},

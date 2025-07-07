@@ -9,7 +9,7 @@ use crate::{
     AppState,
     errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_verification_email,
-    infrastructure::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserRepository,
     models::user::{request::RegisterUser, response::Response},
     utils::password,
 };

@@ -1,17 +1,13 @@
 use std::sync::Arc;
 
-use axum::{
-    Extension, Json,
-    http::{HeaderMap, header},
-    response::IntoResponse,
-};
-use axum_extra::extract::cookie::Cookie;
+use axum::{Extension, Json, http::header, response::IntoResponse};
+use cookie::Cookie;
 use validator::Validate;
 
 use crate::{
     AppState,
     errors::{error_message::ErrorMessage, http_error::HttpError},
-    infrastructure::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserRepository,
     models::user::{request::LoginUser, response::UserLoginResponse},
     utils::{password, token},
 };
@@ -56,11 +52,10 @@ pub async fn login(
             status: "success".to_string(),
             token,
         });
-        let mut headers = HeaderMap::new();
-
-        headers.append(header::SET_COOKIE, cookie.to_string().parse().unwrap());
         let mut response = reponse.into_response();
-        response.headers_mut().extend(headers);
+        response
+            .headers_mut()
+            .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
         Ok(response)
     } else {
         Err(HttpError::bad_request(

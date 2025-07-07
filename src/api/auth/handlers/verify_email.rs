@@ -13,7 +13,7 @@ use crate::{
     domains::user::User,
     errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_welcome_email,
-    infrastructure::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserRepository,
     models::user::request::VerifyEmailQuery,
     utils::token,
 };

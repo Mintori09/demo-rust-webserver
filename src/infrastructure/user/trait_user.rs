@@ -8,7 +8,7 @@ use crate::{
 };
 
 #[async_trait]
-pub trait UserExt {
+pub trait UserRepository {
     async fn get_user(
         &self,
         user_id: Option<Uuid>,
@@ -51,7 +51,7 @@ pub trait UserExt {
 }
 
 #[async_trait]
-impl UserExt for DBClient {
+impl UserRepository for DBClient {
     async fn get_user(
         &self,
         user_id: Option<Uuid>,

@@ -1,2 +1,2 @@
-pub mod auth_router;
 pub mod handlers;
+pub mod routes;

@@ -2,7 +2,7 @@ use crate::{
     AppState,
     domains::user::{User, UserRole},
     errors::{error_message::ErrorMessage, http_error::HttpError},
-    infrastructure::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserRepository,
     utils::token,
 };
 use axum::{

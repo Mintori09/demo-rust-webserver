@@ -11,7 +11,7 @@ use config::database::Config;
 use dotenv::dotenv;
 use infrastructure::{
     database::database::DBClient,
-    middleware::{debug_after::debug_after, request::debug_before},
+    middleware::{debug_after::debug_after, debug_before::debug_before},
 };
 use sqlx::postgres::PgPoolOptions;
 use std::sync::Arc;
@@ -58,7 +58,7 @@ pub async fn run() {
     };
     let cors = CorsLayer::new()
         .allow_origin(
-            format!("http://localhost:{}", config.port)
+            format!("http://localhost:5173")
                 .parse::<HeaderValue>()
                 .unwrap(),
         )
@@ -79,6 +79,8 @@ pub async fn run() {
         .layer(cors.clone());
 
     println!("Server is running on http://localhost:{}", config.port);
+
+    println!("{}", config.port);
 
     let listener = TcpListener::bind(format!("0.0.0.0:{}", config.port))
         .await

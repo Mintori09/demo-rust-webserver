@@ -9,7 +9,7 @@ use crate::{
     AppState,
     errors::http_error::HttpError,
     helpers::mail::mails::send_forgot_password_email,
-    infrastructure::user::trait_user::UserExt,
+    infrastructure::user::trait_user::UserRepository,
     models::user::{request::ForgotPasswordRequest, response::Response},
 };
 

@@ -6,7 +6,7 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::{middleware::auth::JWTAuthMiddleware, user::trait_user::UserExt},
+    infrastructure::{middleware::auth::JWTAuthMiddleware, user::trait_user::UserRepository},
     models::user::{
         response::{FilterUser, UserData, UserResponse},
         update::NameUpdate,
