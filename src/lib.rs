@@ -2,13 +2,12 @@ use api::router::create_router;
 use axum::{
     Extension, Router,
     http::{
-        HeaderValue, Method,
+        Method,
         header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
     },
     middleware,
 };
-use config::database::Config;
-use dotenv::dotenv;
+use config::{client::ClientConfig, database::Config};
 use infrastructure::{
     database::database::DBClient,
     middleware::{debug_after::debug_after, debug_before::debug_before},
@@ -39,7 +38,6 @@ pub async fn run() {
     tracing_subscriber::fmt()
         .with_max_level(LevelFilter::DEBUG)
         .init();
-    dotenv().ok();
 
     let config = Config::init();
     let pool = match PgPoolOptions::new()
@@ -57,11 +55,7 @@ pub async fn run() {
         }
     };
     let cors = CorsLayer::new()
-        .allow_origin(
-            format!("http://localhost:5173")
-                .parse::<HeaderValue>()
-                .unwrap(),
-        )
+        .allow_origin(ClientConfig::init().allowed_origins)
         .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
         .allow_credentials(true)
         .allow_methods([Method::GET, Method::POST, Method::PUT]);
@@ -79,7 +73,6 @@ pub async fn run() {
         .layer(cors.clone());
 
     println!("Server is running on http://localhost:{}", config.port);
-
     println!("{}", config.port);
 
     let listener = TcpListener::bind(format!("0.0.0.0:{}", config.port))

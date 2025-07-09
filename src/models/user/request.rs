@@ -16,6 +16,7 @@ pub struct RegisterUser {
         length(min = 6, message = "Password must be at least 6 characters"),
         must_match(other = "password", message = "Password don't match")
     )]
+    #[serde(rename = "confirmPassword")]
     pub confirm_password: String,
 }
 

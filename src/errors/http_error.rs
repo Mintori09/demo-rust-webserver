@@ -5,6 +5,8 @@ use axum::{
 };
 use core::fmt;
 use serde::Serialize;
+use serde_json::json;
+use validator::ValidationErrors;
 
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
@@ -38,6 +40,29 @@ impl HttpError {
 
     pub fn bad_request(message: impl Into<String>) -> Self {
         Self::new(message, StatusCode::BAD_REQUEST)
+    }
+    pub fn bad_request_from_validation(errors: &ValidationErrors) -> Self {
+        let mut map = serde_json::Map::new();
+
+        for (field, field_errors) in errors.field_errors() {
+            if let Some(first) = field_errors.first() {
+                let message = first
+                    .message
+                    .as_ref()
+                    .map(|m| m.to_string())
+                    .unwrap_or_else(|| "Invalid value".to_string());
+
+                map.insert(field.to_string(), json!(message));
+            }
+        }
+
+        let json_str = serde_json::to_string(&json!({
+            "status": "fail",
+            "errors": map
+        }))
+        .unwrap_or_else(|_| "Validation failed".to_string());
+
+        Self::new(json_str, StatusCode::BAD_REQUEST)
     }
 
     pub fn unique_constraint_violation(message: impl Into<String>) -> Self {

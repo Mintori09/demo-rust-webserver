@@ -1,3 +1,4 @@
+use dotenv::dotenv;
 use std::env;
 
 #[derive(Debug, Clone)]
@@ -10,6 +11,7 @@ pub struct Config {
 
 impl Config {
     pub fn init() -> Self {
+        dotenv().ok();
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set!");
 
         let jwt_secret = env::var("JWT_SECRET_KEY").expect("JWT_SECRET_KEY must be set!");
