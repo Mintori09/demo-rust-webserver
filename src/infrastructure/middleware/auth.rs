@@ -2,7 +2,7 @@ use crate::{
     AppState,
     domains::user::{User, UserRole},
     errors::{error_message::ErrorMessage, http_error::HttpError},
-    infrastructure::user::trait_user::UserRepository,
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
     utils::token,
 };
 use axum::{
@@ -58,8 +58,7 @@ pub async fn auth(
     let user_id = Uuid::parse_str(&token_details.to_string())
         .map_err(|_| HttpError::unauthorized(ErrorMessage::InvalidToken.to_string()))?;
 
-    let user = app_state
-        .db_client
+    let user = UserController::new(&app_state.db_client)
         .get_user(Some(user_id), None, None, None)
         .await
         .map_err(|_| HttpError::unauthorized(ErrorMessage::UserNoLongerExist.to_string()))?

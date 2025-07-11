@@ -1,17 +1,24 @@
 use std::sync::Arc;
 
 use axum::{Extension, Json, extract::Query, response::IntoResponse};
+use serde::{Deserialize, Serialize};
 use validator::Validate;
 
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::user::trait_user::UserRepository,
-    models::user::{
-        request::RequestQuery,
-        response::{FilterUser, UserListResponse},
-    },
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    models::user::response::{FilterUser, UserListResponse},
 };
+
+#[derive(Validate, Serialize, Deserialize)]
+pub struct RequestQuery {
+    #[validate(range(min = 1))]
+    pub page: Option<usize>,
+    #[validate(range(min = 1, max = 50))]
+    pub limit: Option<usize>,
+}
+
 pub async fn get_users(
     Query(query_params): Query<RequestQuery>,
     Extension(app_state): Extension<Arc<AppState>>,
@@ -23,14 +30,12 @@ pub async fn get_users(
     let page = query_params.page.unwrap_or(1);
     let limit = query_params.limit.unwrap_or(10);
 
-    let users = app_state
-        .db_client
+    let users = UserController::new(&app_state.db_client)
         .get_users(page as u32, limit)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    let user_count = app_state
-        .db_client
+    let user_count = UserController::new(&app_state.db_client)
         .get_user_count()
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

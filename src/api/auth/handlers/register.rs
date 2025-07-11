@@ -1,7 +1,7 @@
-use std::sync::Arc;
-
 use axum::{Extension, Json, http::StatusCode, response::IntoResponse};
 use chrono::{Duration, Utc};
+use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -9,10 +9,29 @@ use crate::{
     AppState,
     errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_verification_email,
-    infrastructure::user::trait_user::UserRepository,
-    models::user::{request::RegisterUser, response::Response},
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    models::user::response::Response,
     utils::password,
 };
+
+#[derive(Debug, Validate, Default, Clone, Serialize, Deserialize)]
+pub struct RegisterUser {
+    #[validate(length(min = 1, message = "Name is required"))]
+    pub name: String,
+    #[validate(
+        length(min = 1, message = "Email is required"),
+        email(message = "Email is invalid")
+    )]
+    pub email: String,
+    #[validate(length(min = 6, message = "Password must be at least 6 characters"))]
+    pub password: String,
+    #[validate(
+        length(min = 6, message = "Password must be at least 6 characters"),
+        must_match(other = "password", message = "Password don't match")
+    )]
+    #[serde(rename = "confirmPassword")]
+    pub confirm_password: String,
+}
 
 pub async fn register(
     Extension(app_state): Extension<Arc<AppState>>,
@@ -27,8 +46,7 @@ pub async fn register(
     let hash_password = password::hash_password(&body.password)
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    let result = app_state
-        .db_client
+    let result = UserController::new(&app_state.db_client)
         .save_user(
             &body.name,
             &body.email,

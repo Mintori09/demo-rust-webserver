@@ -12,12 +12,7 @@ use super::handlers::{
 
 pub fn users_handler() -> Router {
     Router::new()
-        .route(
-            "/me",
-            get(get_me).layer(middleware::from_fn(|state, req, next| {
-                role_check(state, req, next, vec![UserRole::Admin, UserRole::User])
-            })),
-        )
+        .route("/me", get(get_me))
         .route(
             "/users",
             get(get_users).layer(middleware::from_fn(|state, req, next| {

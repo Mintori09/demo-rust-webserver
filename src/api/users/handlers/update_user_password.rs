@@ -6,7 +6,10 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::{error_message::ErrorMessage, http_error::HttpError},
-    infrastructure::{middleware::auth::JWTAuthMiddleware, user::trait_user::UserRepository},
+    infrastructure::{
+        middleware::auth::JWTAuthMiddleware,
+        user::{trait_user::UserRepository, users_impl::UserController},
+    },
     models::user::{response::Response, update::UserPasswordUpdate},
     utils::password,
 };
@@ -22,8 +25,7 @@ pub async fn update_user_password(
 
     let user_id = uuid::Uuid::parse_str(&user.id.to_string()).unwrap();
 
-    let result = app_state
-        .db_client
+    let result = UserController::new(&app_state.db_client)
         .get_user(Some(user_id.clone()), None, None, None)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
@@ -44,8 +46,7 @@ pub async fn update_user_password(
     let hash_password = password::hash_password(&body.new_password)
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    app_state
-        .db_client
+    UserController::new(&app_state.db_client)
         .update_user_password(user_id.clone(), hash_password)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

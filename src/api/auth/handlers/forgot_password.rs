@@ -9,9 +9,19 @@ use crate::{
     AppState,
     errors::http_error::HttpError,
     helpers::mail::mails::send_forgot_password_email,
-    infrastructure::user::trait_user::UserRepository,
-    models::user::{request::ForgotPasswordRequest, response::Response},
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    models::user::response::Response,
 };
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Validate, Clone, Serialize, Deserialize)]
+pub struct ForgotPasswordRequest {
+    #[validate(
+        length(min = 1, message = "Email is required"),
+        email(message = "Email is invalid")
+    )]
+    pub email: String,
+}
 
 pub async fn forgot_password(
     Extension(app_state): Extension<Arc<AppState>>,
@@ -20,8 +30,7 @@ pub async fn forgot_password(
     body.validate()
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    let result = app_state
-        .db_client
+    let result = UserController::new(&app_state.db_client)
         .get_user(None, None, Some(&body.email), None)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
@@ -34,8 +43,7 @@ pub async fn forgot_password(
 
     let user_id = Uuid::parse_str(&user.id.to_string()).unwrap();
 
-    app_state
-        .db_client
+    UserController::new(&app_state.db_client)
         .add_verified_token(user_id, &verification_token, expires_at)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

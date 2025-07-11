@@ -7,7 +7,7 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::{error_message::ErrorMessage, http_error::HttpError},
-    infrastructure::user::trait_user::UserRepository,
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
     models::user::{request::LoginUser, response::UserLoginResponse},
     utils::{password, token},
 };
@@ -19,8 +19,7 @@ pub async fn login(
     body.validate()
         .map_err(|e| HttpError::bad_request(e.to_string()))?;
 
-    let result = app_state
-        .db_client
+    let result = UserController::new(&app_state.db_client)
         .get_user(None, None, Some(&body.email), None)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

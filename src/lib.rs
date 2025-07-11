@@ -59,7 +59,9 @@ pub async fn run() {
         .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE])
         .allow_credentials(true)
         .allow_methods([Method::GET, Method::POST, Method::PUT]);
+
     let db_client = DBClient::new(pool);
+
     let app_state = Arc::new(AppState {
         env: config.clone(),
         db_client,
@@ -73,7 +75,6 @@ pub async fn run() {
         .layer(cors.clone());
 
     println!("Server is running on http://localhost:{}", config.port);
-    println!("{}", config.port);
 
     let listener = TcpListener::bind(format!("0.0.0.0:{}", config.port))
         .await

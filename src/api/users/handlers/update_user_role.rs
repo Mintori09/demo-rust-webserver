@@ -6,7 +6,10 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::{middleware::auth::JWTAuthMiddleware, user::trait_user::UserRepository},
+    infrastructure::{
+        middleware::auth::JWTAuthMiddleware,
+        user::{trait_user::UserRepository, users_impl::UserController},
+    },
     models::user::{
         response::{FilterUser, UserData, UserResponse},
         update::RoleUpdate,
@@ -24,8 +27,7 @@ pub async fn update_user_role(
 
     let user_id = uuid::Uuid::parse_str(&user.id.to_string()).unwrap();
 
-    let result = app_state
-        .db_client
+    let result = UserController::new(&app_state.db_client)
         .update_user_role(user_id.clone(), body.role)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

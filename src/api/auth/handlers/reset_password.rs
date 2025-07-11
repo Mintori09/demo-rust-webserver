@@ -2,16 +2,35 @@ use std::sync::Arc;
 
 use axum::{Extension, Json, response::IntoResponse};
 use chrono::Utc;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
 
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::user::trait_user::UserRepository,
-    models::user::{request::ResetPasswordRequest, response::Response},
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    models::user::response::Response,
     utils::password,
 };
+
+#[derive(Debug, Validate, Clone, Serialize, Deserialize)]
+pub struct ResetPasswordRequest {
+    #[validate(length(min = 1, message = "Token is required"))]
+    pub token: String,
+
+    #[validate(length(min = 6, message = "New password must be at least 6 characters"))]
+    pub new_password: String,
+
+    #[validate(
+        length(
+            min = 6,
+            message = "New password confirm must be at least 6 characters"
+        ),
+        must_match(other = "new_password", message = "New passwords do not match!")
+    )]
+    pub new_password_confirm: String,
+}
 
 pub async fn reset_password(
     Extension(app_state): Extension<Arc<AppState>>,
@@ -20,8 +39,8 @@ pub async fn reset_password(
     body.validate()
         .map_err(|e| HttpError::bad_request(e.to_string()))?;
 
-    let result = app_state
-        .db_client
+    let user_controller = UserController::new(&app_state.db_client);
+    let result = UserController::new(&app_state.db_client)
         .get_user(None, None, None, Some(&body.token))
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
@@ -46,22 +65,20 @@ pub async fn reset_password(
     let hash_password = password::hash_password(&body.new_password)
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    app_state
-        .db_client
+    user_controller
         .update_user_password(user_id.clone(), hash_password)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    app_state
-        .db_client
+    user_controller
         .verified_token(&body.token)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
     let response = Response {
-        message: "Password has been successfully reset.".to_string(),
         status: "success",
+        message: "Password has been successfully reset.".to_string(),
     };
 
-    Ok(Json(response).into_response())
+    Ok(Json::from(response).into_response())
 }

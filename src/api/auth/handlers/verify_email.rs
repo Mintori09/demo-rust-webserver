@@ -13,10 +13,16 @@ use crate::{
     domains::user::User,
     errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_welcome_email,
-    infrastructure::user::trait_user::UserRepository,
-    models::user::request::VerifyEmailQuery,
+    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
     utils::token,
 };
+
+use serde::{Deserialize, Serialize};
+#[derive(Debug, Validate, Clone, Serialize, Deserialize)]
+pub struct VerifyEmailQuery {
+    #[validate(length(min = 1, message = "Token is required"))]
+    pub token: String,
+}
 
 pub async fn verify_email(
     Extension(app_state): Extension<Arc<AppState>>,
@@ -40,8 +46,7 @@ pub async fn verify_email(
 }
 
 async fn get_user_by_token(app_state: &Arc<AppState>, token: &str) -> Result<User, HttpError> {
-    app_state
-        .db_client
+    UserController::new(&app_state.db_client)
         .get_user(None, None, None, Some(token))
         .await
         .map_err(server_error)?
@@ -49,8 +54,7 @@ async fn get_user_by_token(app_state: &Arc<AppState>, token: &str) -> Result<Use
 }
 
 async fn verify_user_token(app_state: &Arc<AppState>, token: &str) -> Result<(), HttpError> {
-    app_state
-        .db_client
+    UserController::new(&app_state.db_client)
         .verified_token(token)
         .await
         .map_err(server_error)
