@@ -13,7 +13,7 @@ use crate::{
     domains::user::User,
     errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_welcome_email,
-    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    infrastructure::user::{user_trait::UserRepository, users_impl::PgUserRepository},
     utils::token,
 };
 
@@ -46,7 +46,7 @@ pub async fn verify_email(
 }
 
 async fn get_user_by_token(app_state: &Arc<AppState>, token: &str) -> Result<User, HttpError> {
-    UserController::new(&app_state.db_client)
+    PgUserRepository::new(&app_state.db_client)
         .get_user(None, None, None, Some(token))
         .await
         .map_err(server_error)?
@@ -54,7 +54,7 @@ async fn get_user_by_token(app_state: &Arc<AppState>, token: &str) -> Result<Use
 }
 
 async fn verify_user_token(app_state: &Arc<AppState>, token: &str) -> Result<(), HttpError> {
-    UserController::new(&app_state.db_client)
+    PgUserRepository::new(&app_state.db_client)
         .verified_token(token)
         .await
         .map_err(server_error)

@@ -9,7 +9,7 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    infrastructure::user::{user_trait::UserRepository, users_impl::PgUserRepository},
     models::user::response::Response,
     utils::password,
 };
@@ -39,8 +39,8 @@ pub async fn reset_password(
     body.validate()
         .map_err(|e| HttpError::bad_request(e.to_string()))?;
 
-    let user_controller = UserController::new(&app_state.db_client);
-    let result = UserController::new(&app_state.db_client)
+    let user_controller = PgUserRepository::new(&app_state.db_client);
+    let result = PgUserRepository::new(&app_state.db_client)
         .get_user(None, None, None, Some(&body.token))
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

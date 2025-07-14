@@ -7,7 +7,7 @@ use validator::Validate;
 use crate::{
     AppState,
     errors::http_error::HttpError,
-    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    infrastructure::user::{user_trait::UserRepository, users_impl::PgUserRepository},
     models::user::response::{FilterUser, UserListResponse},
 };
 
@@ -30,12 +30,12 @@ pub async fn get_users(
     let page = query_params.page.unwrap_or(1);
     let limit = query_params.limit.unwrap_or(10);
 
-    let users = UserController::new(&app_state.db_client)
+    let users = PgUserRepository::new(&app_state.db_client)
         .get_users(page as u32, limit)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    let user_count = UserController::new(&app_state.db_client)
+    let user_count = PgUserRepository::new(&app_state.db_client)
         .get_user_count()
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;

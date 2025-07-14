@@ -9,7 +9,7 @@ use crate::{
     AppState,
     errors::{error_message::ErrorMessage, http_error::HttpError},
     helpers::mail::mails::send_verification_email,
-    infrastructure::user::{trait_user::UserRepository, users_impl::UserController},
+    infrastructure::user::{user_trait::UserRepository, users_impl::PgUserRepository},
     models::user::response::Response,
     utils::password,
 };
@@ -46,7 +46,7 @@ pub async fn register(
     let hash_password = password::hash_password(&body.password)
         .map_err(|e| HttpError::server_error(e.to_string()))?;
 
-    let result = UserController::new(&app_state.db_client)
+    let result = PgUserRepository::new(&app_state.db_client)
         .save_user(
             &body.name,
             &body.email,
@@ -68,7 +68,7 @@ pub async fn register(
                 Json(Response {
                     status: "success",
                     message:
-                        "registration successful! Please check your email to verifu your account."
+                        "registration successful! Please check your email to verify your account."
                             .to_string(),
                 }),
             ))

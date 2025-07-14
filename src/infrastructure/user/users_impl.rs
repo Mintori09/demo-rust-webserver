@@ -8,19 +8,19 @@ use crate::{
     infrastructure::database::database::DBClient,
 };
 
-use super::trait_user::UserRepository;
+use super::user_trait::UserRepository;
 
-pub struct UserController<'a> {
+pub struct PgUserRepository<'a> {
     pub pool: &'a Pool<Postgres>,
 }
 
-impl<'a> UserController<'a> {
+impl<'a> PgUserRepository<'a> {
     pub fn new(db: &'a DBClient) -> Self {
         Self { pool: &db.pool }
     }
 }
 #[async_trait]
-impl<'a> UserRepository for UserController<'a> {
+impl<'a> UserRepository for PgUserRepository<'a> {
     async fn get_user(
         &self,
         user_id: Option<Uuid>,

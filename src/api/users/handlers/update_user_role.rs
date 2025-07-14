@@ -8,7 +8,7 @@ use crate::{
     errors::http_error::HttpError,
     infrastructure::{
         middleware::auth::JWTAuthMiddleware,
-        user::{trait_user::UserRepository, users_impl::UserController},
+        user::{user_trait::UserRepository, users_impl::PgUserRepository},
     },
     models::user::{
         response::{FilterUser, UserData, UserResponse},
@@ -27,7 +27,7 @@ pub async fn update_user_role(
 
     let user_id = uuid::Uuid::parse_str(&user.id.to_string()).unwrap();
 
-    let result = UserController::new(&app_state.db_client)
+    let result = PgUserRepository::new(&app_state.db_client)
         .update_user_role(user_id.clone(), body.role)
         .await
         .map_err(|e| HttpError::server_error(e.to_string()))?;
